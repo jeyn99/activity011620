@@ -1,0 +1,30 @@
+form{
+    margin: 20% 25% 25% 30%;
+
+}
+
+input {
+    /* margin: 25%; */
+    max-width: 100%;
+}
+
+a {
+    float: right;
+}
+.viewPosts {
+    margin: 40% 25% 25% 41% ; 
+    float: left;
+}
+.postform {
+    margin: 10% 25% 25% 35%;
+    max-width: 100%;
+    position: fixed;
+}
+
+.notif{
+    float: left;
+}
+
+.postss {
+    max-width: 50%;    
+}
