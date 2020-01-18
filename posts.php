@@ -4,20 +4,20 @@
 <?php
 require "connections.php";
 $classCrud = new CRUD();
-
 $classCrud->accessToOtherPage(1);
-
 if ($link->connect_error) { //try to connect
     die("Connection failed: " . $link->connect_error);
 }
-
-$classCrud->retrievePost($_SESSION['name'])
 ?>
 
-
+<div style='position: fixed; float: right; width: 100%'>
 <a href="logOut.php?logout=true">
 <button class="btn btn-danger">LOGOUT</button>
 </a>
 <a href="dashboard.php">
 <button class="btn btn-primary">DASHBOARD</button>
 </a>
+</div>
+<?php
+    $classCrud->retrievePost($_SESSION['name']);
+?>

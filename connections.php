@@ -20,11 +20,11 @@ class CRUD
     public function insert($username, $password, $confirm_password)
     {
         $query = " INSERT INTO Users ( username , password) VALUES ('$username','$password') ";
-        if ($username != "" && $password != "" ) {
+        if ($username != "" && $password != "") {
             if ($password === $confirm_password) {
                 global $link;
                 if (mysqli_query($link, $query)) {
-                    $_SESSION["logged_in"] =true;
+                    $_SESSION["logged_in"] = true;
                     $_SESSION["name"] = $username;
                     setcookie("user", $username, time() + (86400 * 30), "/");
                     header("Location: dashboard.php");
@@ -49,32 +49,32 @@ class CRUD
             if (mysqli_num_rows($user) > 0) {
                 $list = mysqli_fetch_array($user);
                 if ($password === $list['password']) {
-                    $_SESSION["logged_in"] =true;
+                    $_SESSION["logged_in"] = true;
                     $_SESSION["id"] = $list['user_id'];
                     $_SESSION["name"] = $list['username'];
                     setcookie("user", $list['username'], time() + (86400 * 30), "/");
                     header("Location: dashboard.php");
                 } else {
-                    header("Location: home.php?status=password not match");
+                    $this->home("Location: home.php?status=Password not match");
                 }
             } else { // username not found
-                // $this->home();
-                header("Location: home.php?status=use not found");
+                $this->home("Location: home.php?status=User not found");
             }
         } else {
-            $this->home();
+            $this->home("Location: home.php?status=All Fields Required");
         }
         mysqli_close($link);
     }
 
-    private function home()
+    private function home($msg)
     {
-        header("Location: home.php");
+        header($msg);
 
     }
 
-    function post($username, $post, $link) {
-        $query = " INSERT INTO posts (user, post ) 
+    public function post($username, $post, $link)
+    {
+        $query = " INSERT INTO posts (user, post )
         VALUES ('$username','$post')";
         if (mysqli_query($link, $query)) {
             echo "SAVED POST!";
@@ -82,36 +82,61 @@ class CRUD
             echo "Check";
         }
         mysqli_close($link);
-        
+
     }
 
-    function retrievePost($user) {
+    public function retrievePost($user)
+    {
         $query = "SELECT * FROM posts WHERE user='$user'";
         global $link;
         $result = mysqli_query($link, $query);
-        while($row = mysqli_fetch_array($result)){
-            $id=$row['id'];
-            echo "<div class='postss'> <p>". $row['post']. "</p>
-            <br>
-            <a href='delete.php?id=$id'>Delete</a></td>
-            <a href='update.php?id=$id'>Update</a></td>
-            </div><hr>" ;
-            // echo $row['post'] . "<br>";
+        while ($row = mysqli_fetch_array($result)) {
+            $id = $row['id'];
+            echo "<div class='postss'> <p>" . $row['post'] . "</p>
+            <br><br>
+            <i style='float: right'> Time: " . $row['date'] . "</i><br>
+            <a href='delete.php?id=$id'>Delete</a>
+            <a href='update.php?id=$id&submit=update'>Update</a>
+            </div><hr>";
         }
         mysqli_close($link);
     }
 
-    function update($id) {
-        $query = "SELECT * FROM posts WHERE id='$id'";
+    public function update()
+    {
+        $id = $_REQUEST['id'];
+        $query = "SELECT * FROM posts WHERE id=$id";
         global $link;
-        $result = mysqli_query($link, $query);
-        $data = mysqli_fetch_array($result);
-        echo "<center><textarea  cols='30' rows='10'>" . $data['post']. "</textarea><br>
-        <a href='update.php'>UPDATE</a><br></center>";  
+        if ($_REQUEST['submit'] === "update") {
+            $result = mysqli_query($link, $query);
+            $data = mysqli_fetch_array($result);
+            echo "<form action='update.php' method='POST' readonly>
+            <input name='id' type='hidden' value = " . $id . ">
+        Message: <textarea name='msg' cols='30' rows='10'> " . $data['post'] . "</textarea>
+        <button type='submit' name='submit' value='updated'>UPDATE</button>";
+        } else {
+            $this->updated();
+        }
+
         mysqli_close($link);
     }
 
-    function deletePost($id) {
+    private function updated()
+    {
+        $updatedMsg = $_POST['msg'];
+        $id = $_POST['id'];
+        global $link;
+        $query = "UPDATE posts SET post='$updatedMsg' WHERE id=$id";
+        if ($result = mysqli_query($link, $query)) {
+            echo "UPDATED! <br> <a href='posts.php'>VIEW POSTS</a><br>";
+            
+        } else {
+            echo "Please try again";
+        }
+    }
+
+    public function deletePost($id)
+    {
         $query = "DELETE FROM posts WHERE id='$id'";
         global $link;
         echo mysqli_query($link, $query);
@@ -119,8 +144,9 @@ class CRUD
         mysqli_close($link);
     }
 
-    function logOut($bool) {
-        if($bool) {  
+    public function logOut($bool)
+    {
+        if ($bool) {
             session_destroy();
             setcookie("user", "", time() - (86400 * 30), "/");
             header("Location: home.php");
@@ -131,14 +157,15 @@ class CRUD
         mysqli_close($link);
     }
 
-    function accessToOtherPage($page) {   
+    public function accessToOtherPage($page)
+    {
         session_start();
-        if($page) {
+        if ($page) {
             if (isset($_SESSION["logged_in"])) {
                 if (!$_SESSION["logged_in"]) {
                     header("Location: home.php");
                 }
-            }else{
+            } else {
                 header("Location: home.php");
             }
         } else {
@@ -148,7 +175,7 @@ class CRUD
                 }
             }
         }
-        
+
     }
 
 }

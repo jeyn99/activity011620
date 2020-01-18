@@ -21,5 +21,5 @@
     Password: <input class="form-control" name="password" type="password" value=""><br>
     Confirm Password: <input class="form-control" name="conpassword" type="password" value=""><br>
     <button class="btn btn-info" type="submit" name="submit">REGISTER</button>
-    <a href="/Activity011620/home.php">LOGIN</a>
+    <a href="home.php">LOGIN</a>
 </form>
