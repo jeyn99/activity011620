@@ -14,8 +14,7 @@ $link = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME); // create 
 
 class CRUD
 {
-    public $usernotfound = "";
-    public $passnot = "";
+
 
     public function insert($username, $password, $confirm_password)
     {
@@ -140,7 +139,7 @@ class CRUD
         $query = "DELETE FROM posts WHERE id='$id'";
         global $link;
         echo mysqli_query($link, $query);
-        header("Location: posts.php");
+        $this->home("Location: posts.php");
         mysqli_close($link);
     }
 
@@ -149,7 +148,7 @@ class CRUD
         if ($bool) {
             session_destroy();
             setcookie("user", "", time() - (86400 * 30), "/");
-            header("Location: home.php");
+            $this->home("Location: home.php");
             // print_r($_SESSION);
         } else {
             echo "What?";
@@ -163,15 +162,15 @@ class CRUD
         if ($page) {
             if (isset($_SESSION["logged_in"])) {
                 if (!$_SESSION["logged_in"]) {
-                    header("Location: home.php");
+                    $this->home("Location: home.php");
                 }
             } else {
-                header("Location: home.php");
+                $this->home("Location: home.php");
             }
         } else {
             if (isset($_SESSION["logged_in"])) {
                 if ($_SESSION["logged_in"]) {
-                    header("Location: dashboard.php");
+                    $this->home("Location: dashboard.php");
                 }
             }
         }
